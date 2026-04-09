@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #ffffff;
+    color: #111111;
+    font-family: 'Poppins', sans-serif;
+    padding: 32px 24px;
+    max-width: 680px;
+    margin: 0 auto;
+    font-size: 15px;
+    line-height: 1.8;
+  }
+  .calc-eyebrow {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #B8956A;
+    margin-bottom: 10px;
+  }
+  .calc-title {
+    font-size: 19px;
+    font-weight: 500;
+    color: #111;
+    margin-bottom: 6px;
+  }
+  .calc-sub {
+    font-size: 13px;
+    color: #777;
+    margin-bottom: 28px;
+    line-height: 1.6;
+  }
+  .input-line {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 6px;
+  }
+  .input-label {
+    font-size: 13px;
+    color: #555;
+    white-space: nowrap;
+  }
+  .size-input {
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid #ddd;
+    color: #111;
+    font-family: 'Roboto Mono', monospace;
+    font-size: 24px;
+    font-weight: 500;
+    width: 72px;
+    text-align: center;
+    outline: none;
+    padding: 2px 0;
+    transition: border-color 0.2s;
+    -moz-appearance: textfield;
+  }
+  .size-input::-webkit-outer-spin-button,
+  .size-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+  .size-input:focus { border-color: #B8956A; }
+  .size-unit {
+    font-size: 13px;
+    color: #aaa;
+    font-family: 'Roboto Mono', monospace;
+  }
+  .calc-btn {
+    background: #B8956A;
+    border: none;
+    border-radius: 3px;
+    color: #fff;
+    font-family: 'Poppins', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 0.3px;
+    padding: 10px 26px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .calc-btn:hover { opacity: 0.85; }
+  .error-msg {
+    font-size: 12px;
+    color: #c06060;
+    margin-top: 6px;
+    display: none;
+  }
+  .results {
+    display: none;
+    margin-top: 32px;
+    border-top: 1px solid #ebebeb;
+    padding-top: 28px;
+  }
+  .results.visible { display: block; }
+  .results-eyebrow {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #bbb;
+    margin-bottom: 16px;
+  }
+  .results-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  .rc {
+    background: #f9f9f9;
+    border: 1px solid #ebebeb;
+    border-radius: 3px;
+    padding: 18px 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .rc.best {
+    background: #fff;
+    border-color: #B8956A;
+  }
+  .rc-img {
+    width: 100%;
+    height: 80px;
+    object-fit: contain;
+    margin-bottom: 12px;
+  }
+  .rc-eyebrow {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #ccc;
+    margin-bottom: 6px;
+  }
+  .rc.best .rc-eyebrow { color: #B8956A; }
+  .rc-model {
+    font-size: 11px;
+    font-weight: 500;
+    color: #aaa;
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+  .rc.best .rc-model { color: #333; }
+  .rc-size {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 28px;
+    font-weight: 500;
+    color: #B8956A;
+    line-height: 1;
+    margin-bottom: 3px;
+  }
+  .rc-mm {
+    font-size: 11px;
+    color: #ccc;
+    margin-bottom: 14px;
+    font-family: 'Roboto Mono', monospace;
+  }
+  .rc.best .rc-mm { color: #999; }
+  .rc-link {
+    font-size: 11px;
+    color: #fff;
+    background: #ccc;
+    border-radius: 3px;
+    text-decoration: none;
+    letter-spacing: 0.3px;
+    padding: 7px 12px;
+    display: inline-block;
+    transition: opacity 0.15s;
+    margin-top: auto;
+    width: 100%;
+    text-align: center;
+  }
+  .rc.best .rc-link { background: #B8956A; }
+  .rc-link:hover { opacity: 0.82; }
+  .adele-note {
+    font-size: 12px;
+    color: #aaa;
+    font-style: italic;
+    line-height: 1.7;
+    padding-left: 12px;
+    border-left: 2px solid #ebebeb;
+  }
+  .adele-note strong {
+    color: #B8956A;
+    font-style: normal;
+    font-weight: 500;
+  }
+  @media (max-width: 480px) {
+    .results-grid { grid-template-columns: 1fr; }
+    .input-line { gap: 10px; }
+    .calc-btn { width: 100%; text-align: center; margin-top: 4px; }
+  }
+</style>
+</head>
+<body>
+  <p class="calc-eyebrow">Outil de taille</p>
+  <h3 class="calc-title">Quelle taille commander ?</h3>
+  <p class="calc-sub">Entre ta longueur au repos en centimètres. Maîtresse Adèle te donne la taille exacte à commander sur chaque modèle.</p>
+  <div class="input-line">
+    <span class="input-label">Ma longueur au repos</span>
+    <input type="number" class="size-input" id="sizeInput" min="3" max="20" step="0.5" placeholder="8">
+    <span class="size-unit">cm</span>
+    <button class="calc-btn" onclick="calculate()">Calculer</button>
+  </div>
+  <div class="error-msg" id="errorMsg">Entre une valeur entre 3 et 20 cm.</div>
+  <div class="results" id="results">
+    <p class="results-eyebrow">Maîtresse Adèle te recommande</p>
+    <div class="results-grid" id="resultCards"></div>
+    <p class="adele-note" id="adeleNote"></p>
+  </div>
+<script>
+const models = [
+  {
+    name: 'Python V7',
+    img: 'https://cohclfo5l69xtjhq-67734176008.shopifypreview.com/cdn/shop/files/produit-cage-chastete-resine-mamba-python-v5-s-rose_800x.webp?v=1765359508',
+    url: 'https://chastifyme.com/collections/cages-de-chastete/products/cage-chastete-resine-mamba-python-v7',
+    sizes: [{l:'XXS',mm:50},{l:'XS',mm:65},{l:'S',mm:80},{l:'M',mm:90},{l:'L',mm:100}]
+  },
+  {
+    name: 'Python V8',
+    img: 'https://cohclfo5l69xtjhq-67734176008.shopifypreview.com/cdn/shop/files/produit-cage-chastete-resine-mamba-python-v8-pink-l_800x.webp?v=1765469038',
+    url: 'https://chastifyme.com/collections/cages-de-chastete/products/cage-de-chastete-python-v8-resine',
+    sizes: [{l:'XS',mm:18},{l:'S',mm:34},{l:'M',mm:37},{l:'L',mm:47}]
+  },
+  {
+    name: 'Holy Trainer V4',
+    img: 'https://cohclfo5l69xtjhq-67734176008.shopifypreview.com/cdn/shop/files/produit-cage-chastete-resine-holly-trainer-V4-M-rose_40e061be-f9d7-40b9-93c2-119d3fdc6c42_800x.webp?v=1765809650',
+    url: 'https://chastifyme.com/collections/cages-de-chastete/products/cage-chastete-resine-holly-trainer-v4',
+    sizes: [{l:'S',mm:60},{l:'M',mm:80}]
+  }
+];
+function getBestSize(sizes, targetMm) {
+  let best = null;
+  for (const s of sizes) {
+    if (s.mm >= targetMm && (!best || s.mm < best.mm)) best = s;
+  }
+  return best || sizes[sizes.length - 1];
+}
+function calculate() {
+  const val = parseFloat(document.getElementById('sizeInput').value);
+  const err = document.getElementById('errorMsg');
+  const results = document.getElementById('results');
+  const cards = document.getElementById('resultCards');
+  const note = document.getElementById('adeleNote');
+  if (!val || val < 3 || val > 20) {
+    err.style.display = 'block';
+    results.classList.remove('visible');
+    return;
+  }
+  err.style.display = 'none';
+  const targetMm = Math.round((val - 1.5) * 10);
+  cards.innerHTML = '';
+  models.forEach((m, i) => {
+    const size = getBestSize(m.sizes, targetMm);
+    const isBest = i === 0;
+    const div = document.createElement('div');
+    div.className = 'rc' + (isBest ? ' best' : '');
+    div.innerHTML = `
+      <img class="rc-img" src="${m.img}" alt="${m.name}">
+      <div class="rc-eyebrow">${isBest ? '✦ recommandé' : m.name.toLowerCase()}</div>
+      <div class="rc-model">${m.name}</div>
+      <div class="rc-size">${size.l}</div>
+      <div class="rc-mm">${size.mm} mm</div>
+      <a href="${m.url}" target="_blank" class="rc-link">Voir le produit →</a>
+    `;
+    cards.appendChild(div);
+  });
+  const targetCm = (targetMm / 10).toFixed(1);
+  note.innerHTML = `Ta cage idéale fait <strong>${targetCm} cm</strong> — ta longueur au repos moins 1,5 cm. En cas de doute entre deux tailles, prends toujours la plus grande.`;
+  results.classList.add('visible');
+}
+document.getElementById('sizeInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') calculate();
+});
+</script>
+</body>
+</html>
