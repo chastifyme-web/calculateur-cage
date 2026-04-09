@@ -215,6 +215,7 @@
     <div class="results-grid" id="resultCards"></div>
     <p class="adele-note" id="adeleNote"></p>
   </div>
+
 <script>
 const models = [
   {
@@ -236,6 +237,7 @@ const models = [
     sizes: [{l:'S',mm:60},{l:'M',mm:80}]
   }
 ];
+
 function getBestSize(sizes, targetMm) {
   let best = null;
   for (const s of sizes) {
@@ -243,6 +245,11 @@ function getBestSize(sizes, targetMm) {
   }
   return best || sizes[sizes.length - 1];
 }
+
+function sendHeight() {
+  window.parent.postMessage({ iframeHeight: document.body.scrollHeight + 20 }, '*');
+}
+
 function calculate() {
   const val = parseFloat(document.getElementById('sizeInput').value);
   const err = document.getElementById('errorMsg');
@@ -252,6 +259,7 @@ function calculate() {
   if (!val || val < 3 || val > 20) {
     err.style.display = 'block';
     results.classList.remove('visible');
+    setTimeout(sendHeight, 50);
     return;
   }
   err.style.display = 'none';
@@ -275,18 +283,15 @@ function calculate() {
   const targetCm = (targetMm / 10).toFixed(1);
   note.innerHTML = `Ta cage idéale fait <strong>${targetCm} cm</strong> — ta longueur au repos moins 1,5 cm. En cas de doute entre deux tailles, prends toujours la plus grande.`;
   results.classList.add('visible');
+  setTimeout(sendHeight, 150);
 }
+
 document.getElementById('sizeInput').addEventListener('keydown', e => {
   if (e.key === 'Enter') calculate();
 });
+
+window.addEventListener('load', sendHeight);
+window.addEventListener('resize', sendHeight);
 </script>
 </body>
 </html>
-function sendHeight() {
-  window.parent.postMessage({ iframeHeight: document.body.scrollHeight }, '*');
-}
-window.addEventListener('load', sendHeight);
-window.addEventListener('resize', sendHeight);
-document.querySelector('.calc-btn').addEventListener('click', function() {
-  setTimeout(sendHeight, 100);
-});
